@@ -6,21 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/justp914-gif/mesto-ad.git"
+    "url": "git+https://github.com/Coffe0954/mesto-ad.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/justp914-gif/mesto-ad/issues"
+    "url": "https://github.com/Coffe0954/mesto-ad/issues"
   },
-  "homepage": "https://github.com/justp914-gif/mesto-ad.git#readme",
+  "homepage": "https://Coffe0954.github.io/mesto-ad/",
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "vite": "^7.3.3"
   }
 }
