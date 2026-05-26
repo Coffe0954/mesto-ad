@@ -4,5 +4,5 @@ export default defineConfig({
   server: {
     open: true,
   },
-  base: './',
+  base: '/mesto-ad/',
 });
