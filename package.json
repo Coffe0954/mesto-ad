@@ -12,7 +12,11 @@
     "type": "git",
     "url": "git+https://github.com/Coffe0954/mesto-ad.git"
   },
-  "keywords": ["mesto", "frontend", "vite"],
+  "keywords": [
+    "mesto",
+    "frontend",
+    "vite"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
