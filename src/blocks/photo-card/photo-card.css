@@ -1,0 +1,39 @@
+@import url('./__description/photo-card__description.css');
+@import url('./__image/photo-card__image.css');
+@import url('./__like-button/photo-card__like-button.css');
+@import url('./__like-count/photo-card__like-count.css');
+@import url('./__like-button/_is-active/photo-card__like-button_is-active.css');
+@import url('./__control/photo-card__control.css');
+@import url('./__control-button/photo-card__control-button.css');
+@import url('./__control-button/_type/photo-card__control-button_type_delete.css');
+@import url('./__control-button/_type/photo-card__control-button_type_info.css');
+@import url('./__title/photo-card__title.css');
+
+.photo-card {
+  font-family: 'Inter', Arial, sans-serif;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-card__likes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.photo-card__like-button {
+  margin: 0;
+  padding: 0;
+}
+
+/* Счетчик лайков */
+.photo-card__like-count {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1;
+  text-align: center;
+}

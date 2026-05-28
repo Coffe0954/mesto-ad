@@ -1,0 +1,10 @@
+.overlay-dialog__label {
+  display: block;
+  padding: 0 0 0;
+  margin-bottom: 10px;
+  min-height: 55px;
+}
+
+.overlay-dialog__label:last-of-type {
+  margin-bottom: 0;
+}

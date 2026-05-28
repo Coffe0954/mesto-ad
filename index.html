@@ -10,47 +10,47 @@
     <title>Mesto</title>
     <link rel="stylesheet" href="./src/pages/index.css" />
   </head>
-  <body class="page">
-    <div class="page__content">
-      <header class="header page__section">
+  <body class="app-root">
+    <div class="app-root__content">
+      <div class="app-header app-root__section">
         <img
           src="./src/images/logo.svg"
           alt="Логотип проекта место"
-          class="logo header__logo"
+          class="logo app-header__logo"
         />
-      </header>
-      <main class="content">
-        <section class="profile page__section">
+      </div>
+      <div class="app-main">
+        <div class="user-panel app-root__section">
           <div
-            class="profile__image"
+            class="user-panel__image"
             style="background-image: url('./src/images/avatar.jpg')"
           ></div>
-          <div class="profile__info">
-            <h1 class="profile__title"></h1>
-            <button class="profile__edit-button" type="button"></button>
-            <p class="profile__description"></p>
+          <div class="user-panel__info">
+            <h1 class="user-panel__title"></h1>
+            <button class="user-panel__edit-button" type="button"></button>
+            <p class="user-panel__description"></p>
           </div>
-          <button class="profile__add-button" type="button"></button>
-        </section>
-        <section class="places page__section">
-          <ul class="places__list"></ul>
-        </section>
-      </main>
-      <footer class="footer page__section">
-        <p class="footer__copyright">© 2025 Mesto Russia</p>
-      </footer>
+          <button class="user-panel__add-button" type="button"></button>
+        </div>
+        <div class="photo-grid app-root__section">
+          <ul class="photo-grid__list"></ul>
+        </div>
+      </div>
+      <div class="app-footer app-root__section">
+        <p class="app-footer__copyright">© 2025 Mesto Russia</p>
+      </div>
 
-      <div class="popup popup_type_edit">
-        <div class="popup__content">
-          <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Редактировать профиль</h3>
-          <form class="popup__form" name="edit-profile" novalidate>
-            <label class="popup__label">
+      <div class="overlay-dialog overlay-dialog_type_edit">
+        <div class="overlay-dialog__content">
+          <button type="button" class="overlay-dialog__close"></button>
+          <h3 class="overlay-dialog__title">Редактировать профиль</h3>
+          <form class="overlay-dialog__form" name="edit-user-panel" novalidate>
+            <label class="overlay-dialog__label">
               <input
                 type="text"
                 name="user-name"
                 id="user-name"
-                class="popup__input popup__input_type_name"
+                class="overlay-dialog__input overlay-dialog__input_type_name"
                 placeholder="Имя"
                 required
                 minlength="2"
@@ -58,24 +58,24 @@
                 pattern="^[a-zA-Zа-яА-ЯёЁ\-\s]+$"
                 data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               />
-              <span class="popup__error" id="user-name-error"></span>
+              <span class="overlay-dialog__error" id="user-name-error"></span>
             </label>
-            <label class="popup__label">
+            <label class="overlay-dialog__label">
               <input
                 type="text"
                 name="user-description"
                 id="user-description"
-                class="popup__input popup__input_type_description"
+                class="overlay-dialog__input overlay-dialog__input_type_description"
                 placeholder="Занятие"
                 required
                 minlength="2"
                 maxlength="200"
               />
-              <span class="popup__error" id="user-description-error"></span>
+              <span class="overlay-dialog__error" id="user-description-error"></span>
             </label>
             <button
               type="submit"
-              class="button popup__button popup__button_disabled"
+              class="button overlay-dialog__button overlay-dialog__button_disabled"
               disabled
             >
               Сохранить
@@ -84,17 +84,17 @@
         </div>
       </div>
 
-      <div class="popup popup_type_new-card">
-        <div class="popup__content">
-          <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" name="new-place" novalidate>
-            <label class="popup__label">
+      <div class="overlay-dialog overlay-dialog_type_new-photo-card">
+        <div class="overlay-dialog__content">
+          <button type="button" class="overlay-dialog__close"></button>
+          <h3 class="overlay-dialog__title">Новое место</h3>
+          <form class="overlay-dialog__form" name="new-place" novalidate>
+            <label class="overlay-dialog__label">
               <input
                 type="text"
                 name="place-name"
                 id="place-name"
-                class="popup__input popup__input_type_card-name"
+                class="overlay-dialog__input overlay-dialog__input_type_card-name"
                 placeholder="Название"
                 required
                 minlength="2"
@@ -102,22 +102,22 @@
                 pattern="^[a-zA-Zа-яА-ЯёЁ\-\s]+$"
                 data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               />
-              <span class="popup__error" id="place-name-error"></span>
+              <span class="overlay-dialog__error" id="place-name-error"></span>
             </label>
-            <label class="popup__label">
+            <label class="overlay-dialog__label">
               <input
                 type="url"
                 name="place-link"
                 id="place-link"
-                class="popup__input popup__input_type_url"
+                class="overlay-dialog__input overlay-dialog__input_type_url"
                 placeholder="Ссылка на картинку"
                 required
               />
-              <span class="popup__error" id="place-link-error"></span>
+              <span class="overlay-dialog__error" id="place-link-error"></span>
             </label>
             <button
               type="submit"
-              class="button popup__button popup__button_disabled"
+              class="button overlay-dialog__button overlay-dialog__button_disabled"
               disabled
             >
               Создать
@@ -126,43 +126,43 @@
         </div>
       </div>
 
-      <div class="popup popup_type_image">
-        <div class="popup__content popup__content_content_image">
-          <button type="button" class="popup__close"></button>
-          <img src="" alt="" class="popup__image" />
-          <p class="popup__caption"></p>
+      <div class="overlay-dialog overlay-dialog_type_image">
+        <div class="overlay-dialog__content overlay-dialog__content_content_image">
+          <button type="button" class="overlay-dialog__close"></button>
+          <img src="" alt="" class="overlay-dialog__image" />
+          <p class="overlay-dialog__caption"></p>
         </div>
       </div>
 
-      <div class="popup popup_type_remove-card">
-        <div class="popup__content">
-          <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Вы уверены?</h3>
-          <form class="popup__form" name="remove-card" novalidate>
-            <button type="submit" class="button popup__button">Да</button>
+      <div class="overlay-dialog overlay-dialog_type_remove-photo-card">
+        <div class="overlay-dialog__content">
+          <button type="button" class="overlay-dialog__close"></button>
+          <h3 class="overlay-dialog__title">Вы уверены?</h3>
+          <form class="overlay-dialog__form" name="remove-photo-card" novalidate>
+            <button type="submit" class="button overlay-dialog__button">Да</button>
           </form>
         </div>
       </div>
 
-      <div class="popup popup_type_edit-avatar">
-        <div class="popup__content">
-          <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Обновить аватар</h3>
-          <form class="popup__form" name="edit-avatar" novalidate>
-            <label class="popup__label">
+      <div class="overlay-dialog overlay-dialog_type_edit-avatar">
+        <div class="overlay-dialog__content">
+          <button type="button" class="overlay-dialog__close"></button>
+          <h3 class="overlay-dialog__title">Обновить аватар</h3>
+          <form class="overlay-dialog__form" name="edit-avatar" novalidate>
+            <label class="overlay-dialog__label">
               <input
                 type="url"
                 name="user-avatar"
                 id="user-avatar"
-                class="popup__input popup__input_type_avatar"
+                class="overlay-dialog__input overlay-dialog__input_type_avatar"
                 placeholder="Ссылка на изображение"
                 required
               />
-              <span class="popup__error" id="user-avatar-error"></span>
+              <span class="overlay-dialog__error" id="user-avatar-error"></span>
             </label>
             <button
               type="submit"
-              class="button popup__button popup__button_disabled"
+              class="button overlay-dialog__button overlay-dialog__button_disabled"
               disabled
             >
               Сохранить
@@ -174,45 +174,45 @@
 
     <script src="./src/scripts/index.js" defer type="module"></script>
 
-    <template id="card-template">
-      <li class="places__item card">
-        <img class="card__image" src="" alt="" />
-        <div class="card__control">
+    <template id="photo-card-template">
+      <li class="photo-grid__item photo-card">
+        <img class="photo-card__image" src="" alt="" />
+        <div class="photo-card__control">
           <button
             type="button"
-            class="card__control-button card__control-button_type_delete"
+            class="photo-card__control-button photo-card__control-button_type_delete"
           ></button>
         </div>
-        <div class="card__description">
-          <h2 class="card__title"></h2>
-          <div class="card__likes">
-            <button type="button" class="card__like-button"></button>
-            <span class="card__like-count">0</span>
+        <div class="photo-card__description">
+          <h2 class="photo-card__title"></h2>
+          <div class="photo-card__likes">
+            <button type="button" class="photo-card__like-button"></button>
+            <span class="photo-card__like-count">0</span>
           </div>
         </div>
       </li>
     </template>
 
 
-    <div class="popup popup_type_info">
-      <div class="popup__content popup__content_content_info">
-        <button type="button" class="popup__close"></button>
-        <h3 class="popup__title"></h3>
-        <dl class="popup__info"></dl>
-        <h4 class="popup__text"></h4>
-        <ul class="popup__list"></ul>
+    <div class="overlay-dialog overlay-dialog_type_info">
+      <div class="overlay-dialog__content overlay-dialog__content_content_info">
+        <button type="button" class="overlay-dialog__close"></button>
+        <h3 class="overlay-dialog__title"></h3>
+        <dl class="overlay-dialog__info"></dl>
+        <h4 class="overlay-dialog__text"></h4>
+        <ul class="overlay-dialog__list"></ul>
       </div>
     </div>
 
-    <template id="popup-info-definition-template">
-      <div class="popup__info-item">
-        <dt class="popup__info-term"></dt>
-        <dd class="popup__info-description"></dd>
+    <template id="overlay-dialog-info-definition-template">
+      <div class="overlay-dialog__info-item">
+        <dt class="overlay-dialog__info-term"></dt>
+        <dd class="overlay-dialog__info-description"></dd>
       </div>
     </template>
 
-    <template id="popup-info-user-preview-template">
-      <li class="popup__list-item popup__list-item_type_badge"></li>
+    <template id="overlay-dialog-info-user-preview-template">
+      <li class="overlay-dialog__list-item overlay-dialog__list-item_type_badge"></li>
     </template>
   </body>
 </html>

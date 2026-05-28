@@ -1,0 +1,43 @@
+@import url('./__content/overlay-dialog__content.css');
+@import url('./__content/_content/overlay-dialog__content_content_image.css');
+@import url('./__content/_content/overlay-dialog__content_content_info.css');
+@import url('./__close/overlay-dialog__close.css');
+@import url('./__title/overlay-dialog__title.css');
+@import url('./__form/overlay-dialog__form.css');
+@import url('./__input/overlay-dialog__input.css');
+@import url('./__input/_type/overlay-dialog__input_type_error.css');
+@import url('./__button/overlay-dialog__button.css');
+@import url('./__button/_disabled/overlay-dialog__button_disabled.css');
+@import url('./__caption/overlay-dialog__caption.css');
+@import url('./__image/overlay-dialog__image.css');
+@import url('./__label/overlay-dialog__label.css');
+@import url('./__error/overlay-dialog__error.css');
+@import url('./__text/overlay-dialog__text.css');
+@import url('./__error/_visible/overlay-dialog__error_visible.css');
+@import url('./__info/overlay-dialog__info.css');
+@import url('./__info-item/overlay-dialog__info-item.css');
+@import url('./__info-description/overlay-dialog__info-description.css');
+@import url('./__info-term/overlay-dialog__info-term.css');
+@import url('./__list/overlay-dialog__list.css');
+@import url('./__list-item/overlay-dialog__list-item.css');
+@import url('./__list-item/_type/overlay-dialog__list-item_type_badge.css');
+
+
+.overlay-dialog {
+  font-family: 'Inter', Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, .5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /*Стили для плавного появления модалки*/
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: visibility 0.3s, opacity 0.3s;
+  z-index: 10;
+}

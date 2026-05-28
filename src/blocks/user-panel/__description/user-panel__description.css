@@ -1,0 +1,19 @@
+.user-panel__description {
+  font-size: 18px;
+  line-height: 22px;
+  grid-area: description;
+  margin: 0;
+}
+
+@media screen and (max-width: 568px) {
+  .user-panel__description {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .user-panel__description {
+    width: 100%;
+  }
+}

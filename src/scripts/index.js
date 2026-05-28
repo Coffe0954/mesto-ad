@@ -1,15 +1,15 @@
 import {
-  createCardElement,
-  isCardLiked,
-  renderCardLikes,
-  removeCardElement,
+  createPhotoCard,
+  checkIfLiked,
+  displayLikes,
+  removePhotoCard,
 } from "./components/card.js";
 import {
-  openModalWindow,
-  closeModalWindow,
-  setCloseModalWindowEventListeners,
+  showModal,
+  hideModal,
+  attachModalHandlers,
 } from "./components/modal.js";
-import { enableValidation, clearValidation } from "./components/validation.js"; // Импорт валидации
+import { enableValidation, clearValidation } from "./components/validation.js";
 import {
   getUserInfo,
   getCardList,
@@ -20,342 +20,234 @@ import {
   changeLikeCardStatus,
 } from "./components/api.js";
 
-// Объект с настройками валидации
-const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
+const validationSettings = {
+  formSelector: ".overlay-dialog__form",
+  inputSelector: ".overlay-dialog__input",
+  submitButtonSelector: ".overlay-dialog__button",
+  inactiveButtonClass: "overlay-dialog__button_disabled",
+  inputErrorClass: "overlay-dialog__input_type_error",
+  errorClass: "overlay-dialog__error_visible",
 };
 
-// Глобальная переменная для хранения ID текущего пользователя
-let currentUserId;
-// Переменная для хранения карточки, которую мы собираемся удалить
-let cardToDelete = {};
+let userId;
+let cardToDeleteInfo = {};
 
-// DOM узлы
-const placesWrap = document.querySelector(".places__list");
+const gridContainer = document.querySelector(".photo-grid__list");
 
-// Попапы
-const profileFormModalWindow = document.querySelector(".popup_type_edit");
-const cardFormModalWindow = document.querySelector(".popup_type_new-card");
-const imageModalWindow = document.querySelector(".popup_type_image");
-const avatarFormModalWindow = document.querySelector(".popup_type_edit-avatar");
-const removeCardModalWindow = document.querySelector(".popup_type_remove-card");
+const editPopup = document.querySelector(".overlay-dialog_type_edit");
+const addPopup = document.querySelector(".overlay-dialog_type_new-photo-card");
+const previewPopup = document.querySelector(".overlay-dialog_type_image");
+const avatarPopup = document.querySelector(".overlay-dialog_type_edit-avatar");
+const confirmPopup = document.querySelector(".overlay-dialog_type_remove-photo-card");
 
-// Формы и инпуты
-const profileForm = profileFormModalWindow.querySelector(".popup__form");
-const profileTitleInput = profileForm.querySelector(".popup__input_type_name");
-const profileDescriptionInput = profileForm.querySelector(
-  ".popup__input_type_description"
-);
+const editForm = editPopup.querySelector(".overlay-dialog__form");
+const nameInput = editForm.querySelector(".overlay-dialog__input_type_name");
+const jobInput = editForm.querySelector(".overlay-dialog__input_type_description");
 
-const cardForm = cardFormModalWindow.querySelector(".popup__form");
-const cardNameInput = cardForm.querySelector(".popup__input_type_card-name");
-const cardLinkInput = cardForm.querySelector(".popup__input_type_url");
+const addForm = addPopup.querySelector(".overlay-dialog__form");
+const placeInput = addForm.querySelector(".overlay-dialog__input_type_card-name");
+const linkInput = addForm.querySelector(".overlay-dialog__input_type_url");
 
-const avatarForm = avatarFormModalWindow.querySelector(".popup__form");
-const avatarInput = avatarForm.querySelector(".popup__input");
+const avatarForm = avatarPopup.querySelector(".overlay-dialog__form");
+const avatarUrlInput = avatarForm.querySelector(".overlay-dialog__input");
 
-// Элементы на странице
-const imageElement = imageModalWindow.querySelector(".popup__image");
-const imageCaption = imageModalWindow.querySelector(".popup__caption");
-const profileTitle = document.querySelector(".profile__title");
-const profileDescription = document.querySelector(".profile__description");
-const profileAvatar = document.querySelector(".profile__image");
+const previewImg = previewPopup.querySelector(".overlay-dialog__image");
+const previewTitle = previewPopup.querySelector(".overlay-dialog__caption");
+const userName = document.querySelector(".user-panel__title");
+const userJob = document.querySelector(".user-panel__description");
+const userAvatar = document.querySelector(".user-panel__image");
 
-// Кнопки открытия
-const openProfileFormButton = document.querySelector(".profile__edit-button");
-const openCardFormButton = document.querySelector(".profile__add-button");
+const editBtn = document.querySelector(".user-panel__edit-button");
+const addBtn = document.querySelector(".user-panel__add-button");
 
-const removeCardForm = removeCardModalWindow.querySelector(".popup__form");
+const confirmForm = confirmPopup.querySelector(".overlay-dialog__form");
 
-// Элементы для попапа статистики (Вариант 2)
-const headerLogo = document.querySelector(".header__logo");
-const usersStatsModalWindow = document.querySelector(".popup_type_info");
-const usersStatsModalInfoList =
-  usersStatsModalWindow.querySelector(".popup__info");
-const usersStatsTitle = usersStatsModalWindow.querySelector(".popup__title");
-const usersStatsText = usersStatsModalWindow.querySelector(".popup__text");
-const usersStatsList = usersStatsModalWindow.querySelector(".popup__list");
+const logoIcon = document.querySelector(".app-header__logo");
+const statsPopup = document.querySelector(".overlay-dialog_type_info");
+const statsInfo = statsPopup.querySelector(".overlay-dialog__info");
+const statsHeader = statsPopup.querySelector(".overlay-dialog__title");
+const statsSubheader = statsPopup.querySelector(".overlay-dialog__text");
+const statsUsers = statsPopup.querySelector(".overlay-dialog__list");
 
-// UX Функция загрузки
-const renderLoading = (
-  isLoading,
-  button,
-  buttonText = "Сохранить",
+const setBtnLoading = (
+  loading,
+  btn,
+  defaultText = "Сохранить",
   loadingText = "Сохранение..."
 ) => {
-  if (isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = buttonText;
-  }
+  btn.textContent = loading ? loadingText : defaultText;
 };
 
-// Функции
-const handlePreviewPicture = ({ name, link }) => {
-  imageElement.src = link;
-  imageElement.alt = name;
-  imageCaption.textContent = name;
-  openModalWindow(imageModalWindow);
+const onImagePreview = ({ name, link }) => {
+  previewImg.src = link;
+  previewImg.alt = name;
+  previewTitle.textContent = name;
+  showModal(previewPopup);
 };
 
-const handleLikeClick = (cardElement, cardId, likeButton, likeCountElement) => {
-  const isLiked = isCardLiked(likeButton);
-  changeLikeCardStatus(cardId, isLiked)
-    .then((updatedCard) => {
-      renderCardLikes(likeButton, likeCountElement, updatedCard.likes, currentUserId);
+const onLikeToggle = (cardEl, cardId, likeBtn, likeCounter) => {
+  const liked = checkIfLiked(likeBtn);
+  changeLikeCardStatus(cardId, liked)
+    .then((res) => {
+      displayLikes(likeBtn, likeCounter, res.likes, userId);
     })
-    .catch((err) => console.log(err));
+    .catch(console.error);
 };
 
-const handleDeleteClick = (cardElement, cardId) => {
-  cardToDelete = { element: cardElement, id: cardId };
-  openModalWindow(removeCardModalWindow);
+const onDeleteRequest = (cardEl, cardId) => {
+  cardToDeleteInfo = { element: cardEl, id: cardId };
+  showModal(confirmPopup);
 };
 
-const cardEventHandlers = {
-  onPreviewPicture: handlePreviewPicture,
-  onLikeIcon: handleLikeClick,
-  onDeleteCard: handleDeleteClick,
+const cardCallbacks = {
+  onPreview: onImagePreview,
+  onLike: onLikeToggle,
+  onDelete: onDeleteRequest,
 };
 
-const renderCard = (cardData, method = "append") => {
-  const cardElement = createCardElement(
-    cardData,
-    currentUserId,
-    cardEventHandlers
-  );
-  placesWrap[method](cardElement);
+const addCardToGrid = (data, pos = "append") => {
+  const card = createPhotoCard(data, userId, cardCallbacks);
+  gridContainer[pos](card);
 };
 
-const setProfileData = ({ name, about, avatar }) => {
-  profileTitle.textContent = name;
-  profileDescription.textContent = about;
-
-  if (avatar) {
-    profileAvatar.style.backgroundImage = `url('${avatar}')`;
-  }
+const updateProfileUI = ({ name, about, avatar }) => {
+  userName.textContent = name;
+  userJob.textContent = about;
+  if (avatar) userAvatar.style.backgroundImage = `url('${avatar}')`;
 };
 
-const openFormModal = (modalWindow, formElement, shouldReset = false) => {
-  if (shouldReset) {
-    formElement.reset();
-  }
-
-  clearValidation(formElement, validationConfig);
-  openModalWindow(modalWindow);
+const openDialog = (modal, form, reset = false) => {
+  if (reset) form.reset();
+  clearValidation(form, validationSettings);
+  showModal(modal);
 };
 
-// Функции для статистики (Вариант 2)
-const formatDate = (date) =>
-  date.toLocaleDateString("ru-RU", {
+const formatDateRu = (d) =>
+  d.toLocaleDateString("ru-RU", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-const createInfoString = (term, description) => {
-  const template = document
-    .querySelector("#popup-info-definition-template")
+const createStatLine = (key, val) => {
+  const temp = document
+    .querySelector("#overlay-dialog-info-definition-template")
     .content.cloneNode(true);
-  template.querySelector(".popup__info-term").textContent = term;
-  template.querySelector(".popup__info-description").textContent = description;
-  return template;
+  temp.querySelector(".overlay-dialog__info-term").textContent = key;
+  temp.querySelector(".overlay-dialog__info-description").textContent = val;
+  return temp;
 };
 
-const createUserPreview = (userName) => {
-  const template = document
-    .querySelector("#popup-info-user-preview-template")
+const createBadge = (name) => {
+  const temp = document
+    .querySelector("#overlay-dialog-info-user-preview-template")
     .content.cloneNode(true);
-  const li = template.querySelector(".popup__list-item");
-  li.textContent = userName; // Вставляем имя пользователя как текст
-  return template;
+  temp.querySelector(".overlay-dialog__list-item").textContent = name;
+  return temp;
 };
 
-const handleLogoClick = () => {
+const onLogoClick = () => {
   getCardList()
-    .then((cards) => {
-      // Очищаем старые данные
-      usersStatsModalInfoList.innerHTML = "";
-      usersStatsList.innerHTML = "";
+    .then((list) => {
+      statsInfo.innerHTML = "";
+      statsUsers.innerHTML = "";
+      statsHeader.textContent = "Статистика карточек";
+      statsSubheader.textContent = "Все пользователи";
 
-      usersStatsTitle.textContent = "Статистика карточек";
-      usersStatsText.textContent = "Все пользователи";
-
-      if (cards.length > 0) {
-        // Создаем Map (словарь) для подсчета карточек каждого автора
-        const authorsMap = new Map();
-
-        cards.forEach((card) => {
-          const ownerId = card.owner._id;
-          if (authorsMap.has(ownerId)) {
-            authorsMap.get(ownerId).count += 1;
-          } else {
-            // Сохраняем имя автора и начальный счетчик = 1
-            authorsMap.set(ownerId, { name: card.owner.name, count: 1 });
-          }
+      if (list.length > 0) {
+        const users = new Map();
+        list.forEach((c) => {
+          const oid = c.owner._id;
+          if (users.has(oid)) users.get(oid).count++;
+          else users.set(oid, { name: c.owner.name, count: 1 });
         });
 
-        // Считаем общее количество авторов и максимум карточек у одного
-        const totalUsers = authorsMap.size;
-        let maxCards = 0;
-        authorsMap.forEach((user) => {
-          if (user.count > maxCards) maxCards = user.count;
-        });
+        let max = 0;
+        users.forEach((u) => { if (u.count > max) max = u.count; });
 
-        // 1. Добавляем всю статистику по порядку
-        usersStatsModalInfoList.append(
-          createInfoString("Всего карточек:", cards.length)
-        );
-        usersStatsModalInfoList.append(
-          createInfoString(
-            "Первая создана:",
-            formatDate(new Date(cards[cards.length - 1].createdAt))
-          )
-        );
-        usersStatsModalInfoList.append(
-          createInfoString(
-            "Последняя создана:",
-            formatDate(new Date(cards[0].createdAt))
-          )
-        );
-        usersStatsModalInfoList.append(
-          createInfoString("Всего пользователей:", totalUsers)
-        );
-        usersStatsModalInfoList.append(
-          createInfoString("Максимум карточек от одного:", maxCards)
-        );
+        statsInfo.append(createStatLine("Всего карточек:", list.length));
+        statsInfo.append(createStatLine("Первая создана:", formatDateRu(new Date(list[list.length - 1].createdAt))));
+        statsInfo.append(createStatLine("Последняя создана:", formatDateRu(new Date(list[0].createdAt))));
+        statsInfo.append(createStatLine("Всего пользователей:", users.size));
+        statsInfo.append(createStatLine("Максимум карточек от одного:", max));
 
-        // 2. Отрисовываем бейджики с именами авторов
-        authorsMap.forEach((user) => {
-          usersStatsList.append(createUserPreview(user.name));
-        });
+        users.forEach((u) => statsUsers.append(createBadge(u.name)));
       }
-
-      openModalWindow(usersStatsModalWindow);
+      showModal(statsPopup);
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch(console.error);
 };
 
-const handleProfileFormSubmit = (evt) => {
-  evt.preventDefault();
-  const submitButton = evt.submitter;
-  renderLoading(true, submitButton);
-
-  setUserInfo({
-    name: profileTitleInput.value,
-    about: profileDescriptionInput.value,
-  })
-    .then((userData) => {
-      setProfileData(userData);
-      closeModalWindow(profileFormModalWindow);
+editForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const btn = e.submitter;
+  setBtnLoading(true, btn);
+  setUserInfo({ name: nameInput.value, about: jobInput.value })
+    .then((data) => {
+      updateProfileUI(data);
+      hideModal(editPopup);
     })
-    .catch((err) => console.log(err))
-    .finally(() => renderLoading(false, submitButton));
-};
+    .catch(console.error)
+    .finally(() => setBtnLoading(false, btn));
+});
 
-const handleAvatarFromSubmit = (evt) => {
-  evt.preventDefault();
-  const submitButton = evt.submitter;
-  renderLoading(true, submitButton);
-
-  setAvatar(avatarInput.value)
-    .then((userData) => {
-      setProfileData({
-        name: profileTitle.textContent,
-        about: profileDescription.textContent,
-        avatar: userData.avatar,
-      });
-      closeModalWindow(avatarFormModalWindow);
+avatarForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const btn = e.submitter;
+  setBtnLoading(true, btn);
+  setAvatar(avatarUrlInput.value)
+    .then((data) => {
+      updateProfileUI({ name: userName.textContent, about: userJob.textContent, avatar: data.avatar });
+      hideModal(avatarPopup);
     })
-    .catch((err) => console.log(err))
-    .finally(() => renderLoading(false, submitButton));
-};
+    .catch(console.error)
+    .finally(() => setBtnLoading(false, btn));
+});
 
-const handleCardFormSubmit = (evt) => {
-  evt.preventDefault();
-  const submitButton = evt.submitter;
-  renderLoading(true, submitButton, "Создать", "Создание...");
-
-  postCard({
-    name: cardNameInput.value,
-    link: cardLinkInput.value,
-  })
-    .then((cardData) => {
-      renderCard(cardData, "prepend");
-      closeModalWindow(cardFormModalWindow);
+addForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const btn = e.submitter;
+  setBtnLoading(true, btn, "Создать", "Создание...");
+  postCard({ name: placeInput.value, link: linkInput.value })
+    .then((data) => {
+      addCardToGrid(data, "prepend");
+      hideModal(addPopup);
     })
-    .catch((err) => console.log(err))
-    .finally(() => renderLoading(false, submitButton, "Создать"));
-};
+    .catch(console.error)
+    .finally(() => setBtnLoading(false, btn, "Создать"));
+});
 
-const handleRemoveCardSubmit = (evt) => {
-  evt.preventDefault();
-  const submitButton = evt.submitter;
-  renderLoading(true, submitButton, "Да", "Удаление...");
-
-  deleteCardApi(cardToDelete.id)
+confirmForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const btn = e.submitter;
+  setBtnLoading(true, btn, "Да", "Удаление...");
+  deleteCardApi(cardToDeleteInfo.id)
     .then(() => {
-      removeCardElement(cardToDelete.element);
-      closeModalWindow(removeCardModalWindow);
+      removePhotoCard(cardToDeleteInfo.element);
+      hideModal(confirmPopup);
     })
-    .catch((err) => console.log(err))
-    .finally(() => renderLoading(false, submitButton, "Да"));
-};
-
-// EventListeners для форм
-profileForm.addEventListener("submit", handleProfileFormSubmit);
-cardForm.addEventListener("submit", handleCardFormSubmit);
-avatarForm.addEventListener("submit", handleAvatarFromSubmit);
-removeCardForm.addEventListener("submit", handleRemoveCardSubmit);
-
-// Слушатели открытия попапов с очисткой валидации
-openProfileFormButton.addEventListener("click", () => {
-  profileTitleInput.value = profileTitle.textContent;
-  profileDescriptionInput.value = profileDescription.textContent;
-  clearValidation(profileForm, validationConfig); // Очистка ошибок перед открытием
-  openFormModal(profileFormModalWindow, profileForm);
+    .catch(console.error)
+    .finally(() => setBtnLoading(false, btn, "Да"));
 });
 
-profileAvatar.addEventListener("click", () => {
-  avatarForm.reset(); // Сбрасываем форму
-  clearValidation(avatarForm, validationConfig); // Блокируем кнопку и убираем ошибки
-  openFormModal(avatarFormModalWindow, avatarForm, true);
+editBtn.addEventListener("click", () => {
+  nameInput.value = userName.textContent;
+  jobInput.value = userJob.textContent;
+  openDialog(editPopup, editForm);
 });
 
-openCardFormButton.addEventListener("click", () => {
-  cardForm.reset(); // Сбрасываем форму
-  clearValidation(cardForm, validationConfig); // Блокируем кнопку и убираем ошибки
-  openFormModal(cardFormModalWindow, cardForm, true);
-});
+userAvatar.addEventListener("click", () => openDialog(avatarPopup, avatarForm, true));
+addBtn.addEventListener("click", () => openDialog(addPopup, addForm, true));
+logoIcon.addEventListener("click", onLogoClick);
 
-headerLogo.addEventListener("click", handleLogoClick);
+document.querySelectorAll(".overlay-dialog").forEach(attachModalHandlers);
 
-// Настраиваем обработчики закрытия всех попапов
-const allPopups = document.querySelectorAll(".popup");
-allPopups.forEach((popup) => {
-  setCloseModalWindowEventListeners(popup);
-});
+enableValidation(validationSettings);
 
-// Включение валидации
-enableValidation(validationConfig);
-
-// Инициализация данных (Promise.all)
 Promise.all([getUserInfo(), getCardList()])
-  .then(([userData, cardsData]) => {
-    // 1. Устанавливаем данные пользователя
-    currentUserId = userData._id;
-    setProfileData(userData);
-
-    // 2. Отрисовываем карточки
-    cardsData.forEach((cardData) => {
-      renderCard(cardData);
-    });
+  .then(([user, cards]) => {
+    userId = user._id;
+    updateProfileUI(user);
+    cards.forEach((c) => addCardToGrid(c));
   })
-  .catch((err) => console.log(err));
+  .catch(console.error);
