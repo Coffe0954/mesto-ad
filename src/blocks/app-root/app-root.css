@@ -1,0 +1,6 @@
+@import url('./__content/app-root__content.css');
+@import url('./__section/app-root__section.css');
+
+.app-root {
+  background: #000;
+}

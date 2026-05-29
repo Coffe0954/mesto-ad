@@ -1,13 +1,13 @@
 @import url('../vendor/normalize.css');
 @import url('../vendor/fonts.css');
-@import url('../blocks/page/page.css');
-@import url('../blocks/header/header.css');
-@import url('../blocks/content/content.css');
-@import url('../blocks/footer/footer.css');
-@import url('../blocks/profile/profile.css');
-@import url('../blocks/places/places.css');
-@import url('../blocks/card/card.css');
-@import url('../blocks/popup/popup.css');
-@import url('../blocks/popup/_is-animated/popup_is-animated.css');
-@import url('../blocks/popup/_is-opened/popup_is-opened.css');
+@import url('../blocks/app-root/app-root.css');
+@import url('../blocks/app-header/app-header.css');
+@import url('../blocks/app-main/app-main.css');
+@import url('../blocks/app-footer/app-footer.css');
+@import url('../blocks/user-panel/user-panel.css');
+@import url('../blocks/photo-grid/photo-grid.css');
+@import url('../blocks/photo-card/photo-card.css');
+@import url('../blocks/overlay-dialog/overlay-dialog.css');
+@import url('../blocks/overlay-dialog/_is-animated/overlay-dialog_is-animated.css');
+@import url('../blocks/overlay-dialog/_is-opened/overlay-dialog_is-opened.css');
 /*Импортируем на уровень выше*/

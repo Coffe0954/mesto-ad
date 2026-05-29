@@ -1,0 +1,11 @@
+.overlay-dialog__text {
+  margin: 20px 0 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+@media screen and (max-width: 568px) {
+  .overlay-dialog__text {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,13 @@
+@import url(./__list/photo-grid__list.css);
+@import url(./__item/photo-grid__item.css);
+
+.photo-grid {
+  font-family: 'Inter', Arial, sans-serif;
+  padding: 15px 0 36px;
+}
+
+@media screen and (max-width: 568px) {
+  .photo-grid {
+    padding: 15px 0 18px;
+  }
+}

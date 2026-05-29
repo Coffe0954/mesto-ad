@@ -1,30 +1,27 @@
-const handleEscUp = (evt) => {
-  if (evt.key === "Escape") {
-    const activePopup = document.querySelector(".popup_is-opened");
-    closeModalWindow(activePopup);
+const escHandler = (e) => {
+  if (e.key === "Escape") {
+    const activeModal = document.querySelector(".overlay-dialog_is-opened");
+    if (activeModal) hideModal(activeModal);
   }
 };
 
-
-export const openModalWindow = (modalWindow) => {
-  modalWindow.classList.add("popup_is-opened");
-  document.addEventListener("keyup", handleEscUp);
+export const showModal = (modal) => {
+  modal.classList.add("overlay-dialog_is-opened");
+  document.addEventListener("keyup", escHandler);
 };
 
-export const closeModalWindow = (modalWindow) => {
-  modalWindow.classList.remove("popup_is-opened");
-  document.removeEventListener("keyup", handleEscUp);
+export const hideModal = (modal) => {
+  modal.classList.remove("overlay-dialog_is-opened");
+  document.removeEventListener("keyup", escHandler);
 };
 
-export const setCloseModalWindowEventListeners = (modalWindow) => {
-  const closeButtonElement = modalWindow.querySelector(".popup__close")
-  closeButtonElement.addEventListener("click", () => {
-    closeModalWindow(modalWindow);
-  });
+export const attachModalHandlers = (modal) => {
+  const closeBtn = modal.querySelector(".overlay-dialog__close");
+  closeBtn.addEventListener("click", () => hideModal(modal));
 
-  modalWindow.addEventListener("mousedown", (evt) => {
-    if (evt.target.classList.contains("popup")) {
-      closeModalWindow(modalWindow);
+  modal.addEventListener("mousedown", (e) => {
+    if (e.target.classList.contains("overlay-dialog")) {
+      hideModal(modal);
     }
   });
-}
+};

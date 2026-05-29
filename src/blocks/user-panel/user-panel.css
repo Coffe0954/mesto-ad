@@ -1,0 +1,23 @@
+@import url('./__description/user-panel__description.css');
+@import url('./__add-button/user-panel__add-button.css');
+@import url('./__edit-button/user-panel__edit-button.css');
+@import url('./__info/user-panel__info.css');
+@import url('./__title/user-panel__title.css');
+@import url('./__image/user-panel__image.css');
+
+.user-panel {
+  font-family: 'Inter', Arial, sans-serif;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 36px 0;
+  /*Если подгонять под ПЭПЭ, то тут padding: 40px 0; Проявите лоялити*/
+}
+
+@media screen and (max-width: 480px) {
+  .user-panel {
+    padding: 43px 0 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+}
